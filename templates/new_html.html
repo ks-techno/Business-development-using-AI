@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .chat-container {
+            max-width: 500px;
+            margin: 20px auto;
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+            /* Limit height and enable scrolling */
+            max-height: 600px;
+            overflow-x: auto;
+            display: flex;
+            flex-direction:column;
+            /* max-width: 700px;
+            margin: 20px auto;
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #f9f9f9; */
+        }
+
+        .chat-message {
+            margin: 5px;
+            padding: 8px;
+            border-radius: 10px;
+            background-color: #bed4eb;
+            color: black;
+            max-width: 70%;
+            margin-right: auto;
+        }
+
+        .user-message {
+            margin: 5px;
+            padding: 8px;
+            border-radius: 10px;
+            color: black;
+            max-width: 70%;
+            margin-left: auto;
+            background-color: #a1e0a3;
+        }
+        /* .chat-input {
+            margin: 5px;
+            padding: 8px;
+            border-radius: 10px;
+            color: black;
+            max-width: 90%;
+            margin-right: auto;
+            background-color: #a1e0a3;
+        } */
+        .chat-input {
+            flex-grow: 1; /* Occupy 70% of the width */
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-left: auto;
+        }
+        .send-button {
+            width: 20px;
+            height: 20px;
+            border: none;
+            background-color: #bed4eb;
+            border-radius: 50%;
+            color: black;
+            font-size: 20px;
+            cursor: pointer;
+            background-image: url('data:image/svg+xml;charset=utf-8,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="24px" height="24px"%3E%3Cpath d="M2 21l21-9L2 3v10l15 2-15 2z"/%3E%3C/svg%3E');
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+        .chat-input-container {
+            display: flex;
+            justify-content: space-between;
+            max-width: 100%;
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat" id="chat"></div>
+        <div style="display: flex; justify-content: space-between; max-width: 70%; margin-left: auto;">
+            <input class="chat-input" type="text" id="user-input" placeholder="Type your message...">
+            <button style="color:rgb(85, 4, 160); max-width: 10%; margin-left: auto;" onclick="sendMessage()">&gt;</button>
+        </div>
+    </div>
+    
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        const chatContainer = document.getElementById("chat");
+        const userInput = document.getElementById("user-input");
+
+        function appendMessage(message, isUser = false) {
+            const messageClass = isUser ? "user-message" : "chat-message";
+            const div = document.createElement("div");
+            div.className = messageClass;
+            div.innerText = message;
+            chatContainer.appendChild(div);
+        }
+
+        function sendMessage() {
+            const userMessage = userInput.value.trim();
+            if (userMessage !== "") {
+                appendMessage("You: " + userMessage, true);
+                userInput.value = "";
+
+                // Replace this section with actual chatbot processing
+                setTimeout(() => {
+                    // reply = "Sorry, bot is unavailable";
+                    reply = sendRequest(userMessage)
+                    debugger;
+                    // const reply = "Sorry, I'm just a basic chatbot. I don't have real intelligence yet!";
+                    appendMessage("Chatbot: " + reply);
+                }, 500);
+            }
+        }
+
+        function sendRequest(question) {
+            const url = '/chat';
+            const jsonData = { 'question': question };
+            var respons;
+            $.ajax({
+                url: url,
+                method: 'POST',
+                contentType: 'application/json',
+                async: false,
+                data: JSON.stringify(jsonData),
+                success: function (responseData) {
+                    console.log('Response:', responseData);
+                    respons = responseData
+                },
+                error: function (xhr, status, error) {
+                    console.error('Request failed. Status:', status);
+                }
+            });
+            return respons
+        }
+
+        userInput.addEventListener("keyup", function (event) {
+            if (event.key === "Enter") {
+                sendMessage();
+            }
+        });
+    </script>
+</body>
+</html>

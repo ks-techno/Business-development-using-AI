@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>File List</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+            }
+        
+            .file-list {
+                list-style: none;
+                padding: 0;
+                margin: 20px;
+                display: flex; /* Use flex display to arrange items horizontally */
+                flex-wrap: wrap; /* Allow items to wrap to the next line if necessary */
+            }
+        
+            .file-list-item {
+                margin: 10px;
+                flex-basis: calc(100% - 20px); /* Set the width of each item to one-third of the container minus margin */
+                box-sizing: border-box; /* Include padding and border in the width calculation */
+                text-align: left; /* Center-align the content */
+            }
+        
+            .file-link {
+                text-decoration: none;
+                color: #333;
+            }
+        
+            .file-link:hover {
+                text-decoration: underline;
+            }
+        
+            .status {
+                color: green;
+                margin-top: 10px; /* Add some space between status and buttons */
+            }
+        </style>
+        
+    </head>
+<body>
+    <h1>Upload an Excel File</h1>
+    <form action="/upload" method="POST" enctype="multipart/form-data">
+        <input type="file" name="excel_file">
+        <input type="submit" value="Upload">
+    </form>
+    <h1>File List</h1>
+    <ul class="file-list">
+        {% for file_name, sts in zip(excel_files,status) %}
+        <li class="file-list-item">
+            <button class="file-link">{{ file_name }}</button>
+            <button class="status">{{ sts }}</button>
+            <button class="process" onclick="check_status('{{file_name}}')">Check Status</button>
+            {% if "You can start scraping the urls" in sts%}
+            <button class="process" onclick="scrap_file('{{file_name}}')">Start Scraping</button>
+            {% elif "You can start comment generation" in sts%}
+            <button class="process" onclick="comment_file('{{file_name}}')">Start Comments Generation</button>
+            {% elif "can download" in sts%}
+            <form action="/download" method="POST">
+                <input type="hidden" value="{{ file_name }}" name="file">
+                <input type="submit" value="Download File">
+            </form>
+            {%endif%}
+        </li>
+        <br>
+        {% endfor %}
+    </ul>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        function scrap_file(file_name) {
+            debugger;
+            const url = '/scrap-file';
+            const jsonData = { 'file': file_name };
+            var respons;
+            $.ajax({
+                url: url,
+                method: 'POST',
+                contentType: 'application/json',
+                async: false,
+                data: JSON.stringify(jsonData),
+                success: function (responseData) {
+                    console.log('Response:', responseData);
+                    respons = responseData
+                },
+                error: function (xhr, status, error) {
+                    console.error('Request failed. Status:', status);
+                }
+            });
+            alert(respons)
+        }
+        function comment_file(file_name) {
+            debugger;
+            const url = '/comment-file';
+            const jsonData = { 'file': file_name };
+            var respons;
+            $.ajax({
+                url: url,
+                method: 'POST',
+                contentType: 'application/json',
+                async: false,
+                data: JSON.stringify(jsonData),
+                success: function (responseData) {
+                    console.log('Response:', responseData);
+                    respons = responseData
+                },
+                error: function (xhr, status, error) {
+                    console.error('Request failed. Status:', status);
+                }
+            });
+            alert(respons)
+        }
+
+        function check_status(file_name) {
+            debugger;
+            const url = '/check-status';
+            const jsonData = { 'file': file_name };
+            var respons;
+            $.ajax({
+                url: url,
+                method: 'POST',
+                contentType: 'application/json',
+                async: false,
+                data: JSON.stringify(jsonData),
+                success: function (responseData) {
+                    console.log('Response:', responseData);
+                    respons = responseData
+                },
+                error: function (xhr, status, error) {
+                    console.error('Request failed. Status:', status);
+                }
+            });
+            alert(respons)
+        }
+    </script>
+</body>
+</html>

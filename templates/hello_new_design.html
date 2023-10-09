@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.5.0/dist/css/bootstrap.min.css">
+        <title>File List</title>
+        <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .file-list {
+            list-style: none;
+            padding: 0;
+            margin: 30px;
+            display: flex;
+            /* Use flex display to arrange items horizontally */
+            flex-wrap: wrap;
+            width: 100%;
+            /* background-color: #007BFF; */
+
+        }
+
+        .file-list-item {
+            margin: 10px;
+            flex-basis: calc(100% - 20px);
+            /* Set the width of each item to one-third of the container minus margin */
+            box-sizing: border-box;
+            /* Include padding and border in the width calculation */
+            text-align: left;
+            /* Center-align the content */
+        }
+
+        .file-link {
+            text-decoration: none;
+            color: #333;
+        }
+
+        .file-link:hover {
+            text-decoration: underline;
+        }
+
+        .status {
+            color: green;
+            margin-top: 10px;
+            /* Add some space between status and buttons */
+
+        }
+
+        body {
+            text-align: center;
+            font-family: Arial, sans-serif;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-top: 20px;
+        }
+
+        form {
+            margin-top: 10px;
+        }
+
+        input[type="file"] {
+            padding: 5px;
+            border: 1px solid #ccc;
+        }
+
+        input[type="submit"] {
+            padding: 5px 10px;
+            /* background-color: #007BFF; */
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        ul.file-list {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li.file-list-item {
+            margin: 10px 0;
+            display: flex;
+            /* justify-content: center;
+        align-items: center; */
+        }
+
+        /* button.file-link, button.status, button.process {
+        padding: 5px 10px;
+        margin: 0 5px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+    } */
+        button.file-link:hover,
+        button.status:hover,
+        button.process:hover {
+            background-color: #5EBE80;
+
+        }
+
+        button.file-link {
+            background-color: #053061;
+            color: white;
+            text-decoration: none !important;
+            padding: 5px 10px;
+            margin: 0 5px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        button.status {
+            background-color: #a8bed8;
+            color: rgb(0, 0, 0);
+            padding: 5px 10px;
+            margin: 0 5px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+
+        }
+
+        button.process {
+
+            background-color: #053061;
+            color: white;
+            padding: 5px 10px;
+            margin: 0 5px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            float: right !important;
+            display: flex !important;
+            justify-content: end !important;
+
+        }
+
+        form.download-form {
+            display: inline;
+        }
+
+        #download1 {
+            background-color: #053061;
+
+        }
+
+        #download1:hover {
+            background-color: #5EBE80;
+
+        }
+
+        #uploadbtn {
+            background-color: #053061;
+            border-radius: 8px;
+        }
+
+        #uploadbtn:hover {
+            background-color: #5EBE80;
+        }
+
+        .button-container {
+            display: flex !important;
+            justify-content: flex-end !important;
+            width: 100%;
+        }
+
+        .button-container2 {
+
+            display: flex !important;
+            justify-content: flex-end !important;
+            width: 50%;
+        }
+
+        .file-list-item {
+
+            display: flex;
+            justify-content: space-around !important;
+        }
+
+        .main {
+    
+            width: 100%;
+
+        }
+
+        .content {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        .last {
+      
+            display: flex;
+            justify-content: flex-end;
+            width: 100%;
+        }
+    </style>
+
+    </head>
+
+    <body>
+
+        <div class="container-fluid" style>
+            <div class="container">
+                <div>
+                    <h1>Upload an Excel File</h1>
+                    <form action="/upload" method="POST"
+                        enctype="multipart/form-data">
+                        <input type="file" name="excel_file">
+                        <input id="uploadbtn" type="submit" value="Upload">
+                    </form>
+                    <h1>File List</h1>
+
+                    <div class="main">
+                        <div class="space">
+                            <div class="content">
+                                <ul class="sds">
+                                    {% for file_name, sts in
+                                    zip(excel_files,status) %}
+                                    <li class="file-list">
+                                        <button class>{{ file_name }}</button>
+                                        <button class="status">{{ sts }}</button>
+                                        
+                                        <div class="last">
+                                            
+                                            <button class="process"
+                                                onclick="check_status('{{file_name}}')">Check
+                                                Status</button>
+                                        
+                                        {% if "You can start scraping the urls"
+                                        in sts%}
+                                        <button class="process"
+                                            onclick="scrap_file('{{file_name}}')">Start
+                                            Scraping</button>
+                                            
+                                        {% elif
+                                        "You can start comment generation" in
+                                        sts%}
+                                        <button class="process"
+                                            onclick="comment_file('{{file_name}}')">Start
+                                            Comments
+                                            Generation</button>
+
+                                        {% elif "can download" in sts%}
+                                        <form action="/download" method="POST"
+                                        class="process">
+                                            <input type="hidden"
+                                                value="{{ file_name }}"
+                                                name="file">
+                                            <input id="download1" type="submit"
+                                                value="Download File"
+                                                style="border-radius: 8px;">
+                                        </form>
+                                        {%endif%}
+                                    </div>
+                                    </li>
+
+                                    <br>
+                                    {% endfor %}
+
+                                </ul>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+            <script>
+            function scrap_file(file_name) {
+                debugger;
+                const url = '/scrap-file';
+                const jsonData = { 'file': file_name };
+                var respons;
+                $.ajax({
+                    url: url,
+                    method: 'POST',
+                    contentType: 'application/json',
+                    async: false,
+                    data: JSON.stringify(jsonData),
+                    success: function (responseData) {
+                        console.log('Response:', responseData);
+                        respons = responseData
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Request failed. Status:', status);
+                    }
+                });
+                alert(respons)
+            }
+            function comment_file(file_name) {
+                debugger;
+                const url = '/comment-file';
+                const jsonData = { 'file': file_name };
+                var respons;
+                $.ajax({
+                    url: url,
+                    method: 'POST',
+                    contentType: 'application/json',
+                    async: false,
+                    data: JSON.stringify(jsonData),
+                    success: function (responseData) {
+                        console.log('Response:', responseData);
+                        respons = responseData
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Request failed. Status:', status);
+                    }
+                });
+                alert(respons)
+            }
+
+            function check_status(file_name) {
+                debugger;
+                const url = '/check-status';
+                const jsonData = { 'file': file_name };
+                var respons;
+                $.ajax({
+                    url: url,
+                    method: 'POST',
+                    contentType: 'application/json',
+                    async: false,
+                    data: JSON.stringify(jsonData),
+                    success: function (responseData) {
+                        console.log('Response:', responseData);
+                        respons = responseData
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Request failed. Status:', status);
+                    }
+                });
+                alert(respons)
+            }
+        </script>
+        </body>
+
+    </html>
